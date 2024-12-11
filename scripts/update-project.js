@@ -103,3 +103,13 @@ rl.question("What would you like to name your project? ", (projectName) => {
 
   askForSlug(projectName);
 });
+// Initialize new git repository
+const gitPath = path.join(__dirname, "..", ".git");
+if (fs.existsSync(gitPath)) {
+  fs.rmSync(gitPath, { recursive: true, force: true });
+}
+console.log("🗑️  Removed existing .git directory");
+
+const { execSync } = require("child_process");
+execSync("git init", { cwd: path.join(__dirname, "..") });
+console.log("🎉 Initialized new git repository");
