@@ -12,8 +12,10 @@ module.exports = {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: process.env.BUNDLE_IDENTIFIER,
     },
     android: {
+      package: process.env.BUNDLE_IDENTIFIER,
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff",

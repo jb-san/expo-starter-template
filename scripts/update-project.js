@@ -6,6 +6,21 @@ const readline = require("readline");
 const fs = require("fs");
 const path = require("path");
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+// Handle Ctrl+C and proper cleanup
+rl.on("SIGINT", () => {
+  console.log("\n❌ Update project aborted");
+  rl.close();
+});
+
+rl.on("close", () => {
+  process.exit(1);
+});
+
 // Validates npm package name according to npm rules
 // See: https://github.com/npm/validate-npm-package-name
 function isValidPackageName(name) {
@@ -25,11 +40,6 @@ function isValidScheme(scheme) {
   const validSchemePattern = /^[a-z0-9-]+$/;
   return !validSchemePattern.test(scheme);
 }
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 function askForSlug(projectName) {
   rl.question(
@@ -64,6 +74,18 @@ function askForScheme(projectName, appSlug) {
         return;
       }
 
+      askForBundleIdentifier(projectName, appSlug, appScheme);
+    }
+  );
+}
+
+function askForBundleIdentifier(projectName, appSlug, appScheme) {
+  const defaultBundleId = `com.${appSlug}`;
+  rl.question(
+    `What would you like the bundle identifier to be? (Press enter to use ${defaultBundleId}) `,
+    (bundleId) => {
+      const bundleIdentifier = bundleId || defaultBundleId;
+
       // Update .env with all values
       const envPath = path.join(__dirname, "..", ".env");
       let envContent = fs.readFileSync(envPath, "utf8");
@@ -76,6 +98,10 @@ function askForScheme(projectName, appSlug) {
         /^APP_SCHEME=.*$/m,
         `APP_SCHEME=${appScheme}`
       );
+      envContent = envContent.replace(
+        /^BUNDLE_IDENTIFIER=.*$/m,
+        `BUNDLE_IDENTIFIER=${bundleIdentifier}`
+      );
       fs.writeFileSync(envPath, envContent);
 
       // Update package.json
@@ -85,31 +111,49 @@ function askForScheme(projectName, appSlug) {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
       console.log(
-        `✅ Updated project name to "${projectName}", app slug to "${appSlug}", and scheme to "${appScheme}"`
+        `✅ Updated project name to "${projectName}", app slug to "${appSlug}", scheme to "${appScheme}", and bundle identifier to "${bundleIdentifier}"`
       );
+
+      askForGitInit();
+    }
+  );
+}
+
+function askForGitInit() {
+  rl.question(
+    "Would you like to initialize a new git repository? (y/N) ",
+    (answer) => {
+      if (answer.toLowerCase() === "y") {
+        // Initialize new git repository
+        const gitPath = path.join(__dirname, "..", ".git");
+        if (fs.existsSync(gitPath)) {
+          fs.rmSync(gitPath, { recursive: true, force: true });
+          console.log("🗑️  Removed existing .git directory");
+        }
+
+        const { execSync } = require("child_process");
+        execSync("git init", { cwd: path.join(__dirname, "..") });
+        console.log("🎉 Initialized new git repository");
+      }
       rl.close();
     }
   );
 }
 
-rl.question("What would you like to name your project? ", (projectName) => {
-  if (isValidPackageName(projectName)) {
-    console.error(
-      "❌ Invalid package name. Package names must follow npm naming rules.\n\nSee: https://github.com/npm/validate-npm-package-name"
-    );
-    rl.close();
-    return;
+const currentFolderName = path.basename(path.join(__dirname, ".."));
+rl.question(
+  `What would you like to name your project? (${currentFolderName}) `,
+  (input) => {
+    const projectName = input.trim() || currentFolderName;
+
+    if (isValidPackageName(projectName)) {
+      console.error(
+        "❌ Invalid package name. Package names must follow npm naming rules.\n\nSee: https://github.com/npm/validate-npm-package-name"
+      );
+      rl.close();
+      return;
+    }
+
+    askForSlug(projectName);
   }
-
-  askForSlug(projectName);
-});
-// Initialize new git repository
-const gitPath = path.join(__dirname, "..", ".git");
-if (fs.existsSync(gitPath)) {
-  fs.rmSync(gitPath, { recursive: true, force: true });
-}
-console.log("🗑️  Removed existing .git directory");
-
-const { execSync } = require("child_process");
-execSync("git init", { cwd: path.join(__dirname, "..") });
-console.log("🎉 Initialized new git repository");
+);
