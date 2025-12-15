@@ -14,6 +14,7 @@ it includes:
 
    ```bash
    git clone https://github.com/jb-san/expo-starter-template.git
+   mv .env.example .env
    ```
 
 1. Install dependencies
