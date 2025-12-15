@@ -5,8 +5,16 @@ it includes:
 
 - [Nativewind](https://nativewind.dev)
 - [React Native SVG Transformer](https://github.com/kristerkari/react-native-svg-transformer)
+- [Expo Router](https://docs.expo.dev/router/introduction/)
+- Use environment variables for the project (app name, slug, scheme, bundle identifier)
 
 ## Get started
+
+0. Clone the repository
+
+   ```bash
+   git clone https://github.com/jb-san/expo-starter-template.git
+   ```
 
 1. Install dependencies
 
