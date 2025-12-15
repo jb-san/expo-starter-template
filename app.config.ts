@@ -11,6 +11,7 @@ module.exports = {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
+      useFrameworks: "static",
       supportsTablet: true,
       bundleIdentifier: process.env.BUNDLE_IDENTIFIER,
     },
