@@ -11,8 +11,8 @@ export const Colors = {
   light: {
     text: colors.slate[900], // Dark slate for text
     background: colors.white, // White background
-    tint: colors.sky[600], // Sky blue for tint
-    icon: colors.slate[500], // Medium slate for icons
+    tint: colors.orange[600], // Sky blue for tint
+    icon: colors.sky[500], // Medium slate for icons
     tabIconDefault: colors.slate[500],
     tabIconSelected: colors.sky[600],
   },
@@ -20,7 +20,7 @@ export const Colors = {
     text: colors.slate[100], // Light slate for text
     background: colors.slate[900], // Very dark slate for background
     tint: colors.white, // White for tint
-    icon: colors.slate[400], // Light-medium slate for icons
+    icon: colors.sky[400], // Light-medium slate for icons
     tabIconDefault: colors.slate[400],
     tabIconSelected: colors.white,
   },
