@@ -9,7 +9,6 @@ module.exports = {
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
     ios: {
       useFrameworks: "static",
       supportsTablet: true,
@@ -28,7 +27,6 @@ module.exports = {
       favicon: "./assets/images/favicon.png",
     },
     plugins: [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -38,9 +36,12 @@ module.exports = {
           backgroundColor: "#ffffff",
         },
       ],
+      "expo-font",
+      "expo-web-browser",
     ],
     experiments: {
       typedRoutes: true,
+      reactCompiler: true,
     },
   },
 };

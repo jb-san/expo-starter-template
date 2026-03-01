@@ -3,7 +3,9 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Image, Platform, StyleSheet, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
@@ -23,6 +25,29 @@ export default function HomeScreen() {
           <Text>Hello</Text>
         </View>
       </ThemedView>
+
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Apple Zoom Transition</ThemedText>
+        <ThemedText>
+          Tap the card below to see a native iOS 18+ zoom transition.
+        </ThemedText>
+        <Link href="/detail" asChild>
+          <Pressable>
+            <Link.AppleZoom>
+              <View style={styles.zoomCard}>
+                <Image
+                  source={require("@/assets/images/partial-react-logo.png")}
+                  style={styles.zoomImage}
+                />
+                <ThemedText type="defaultSemiBold" style={styles.zoomLabel}>
+                  View Detail
+                </ThemedText>
+              </View>
+            </Link.AppleZoom>
+          </Pressable>
+        </Link>
+      </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
@@ -77,5 +102,18 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  zoomCard: {
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "rgba(0,0,0,0.05)",
+  },
+  zoomImage: {
+    width: "100%",
+    height: 140,
+  },
+  zoomLabel: {
+    padding: 12,
+    textAlign: "center",
   },
 });
