@@ -12,9 +12,14 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemePreferenceProvider } from "@/providers/ThemePreferenceProvider";
+import { requireOptionalNativeModule } from "expo";
 import "../global.css";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+// Disable the floating action button in the dev menu.
+const DevMenuPreferences = requireOptionalNativeModule("DevMenuPreferences");
+DevMenuPreferences?.setPreferencesAsync({ showFloatingActionButton: false });
 
 export default function RootLayout() {
   const [loaded] = useFonts({
