@@ -89,7 +89,7 @@ export function ThemePreferenceProvider({
     });
   }, [hasLoadedPreference, preference]);
 
-  const resolvedColorScheme =
+  const resolvedColorScheme: "light" | "dark" =
     hasHydrated && colorScheme === "dark" ? "dark" : "light";
 
   const value = useMemo(
