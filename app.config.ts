@@ -40,6 +40,7 @@ module.exports = {
       "expo-font",
       "expo-web-browser",
       "expo-status-bar",
+      "@react-native-vector-icons/material-icons",
     ],
     experiments: {
       typedRoutes: true,
