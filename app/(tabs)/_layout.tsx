@@ -1,11 +1,14 @@
 import { Colors } from "@/constants/Colors";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { Platform, Text, View } from "react-native";
+import { useState } from "react";
+import { Platform, Pressable, Text, View } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const tintColor = Colors[colorScheme].icon;
+
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
@@ -34,51 +37,71 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.BottomAccessory>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            marginHorizontal: 8,
-            marginBottom: Platform.OS === "ios" ? 0 : 8,
-            backgroundColor:
-              colorScheme === "dark"
-                ? "rgba(255,255,255,0.1)"
-                : "rgba(0,0,0,0.05)",
-            borderRadius: 12,
-          }}
-        >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 6,
-              backgroundColor: tintColor,
-              marginRight: 12,
-            }}
-          />
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontWeight: "600",
-                fontSize: 13,
-                color: colorScheme === "dark" ? "#fff" : "#000",
-              }}
-            >
-              Now Playing
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                color: colorScheme === "dark" ? "#aaa" : "#666",
-              }}
-            >
-              Artist — Song Title
-            </Text>
-          </View>
-        </View>
+        <NowPlayingBar colorScheme={colorScheme} />
       </NativeTabs.BottomAccessory>
     </NativeTabs>
+  );
+}
+
+function NowPlayingBar({ colorScheme }: { colorScheme: "light" | "dark" }) {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const isDark = colorScheme === "dark";
+  const textColor = isDark ? "#f1f5f9" : "#0f172a";
+  const mutedColor = isDark ? "#94a3b8" : "#64748b";
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 14,
+        marginBottom: Platform.OS === "ios" ? 0 : 8,
+      }}
+    >
+      <IconSymbol name="music.note" size={20} color={mutedColor} />
+
+      <View style={{ minWidth: 0, marginLeft: 10, marginRight: 12, alignItems: "center" }}>
+        <Text
+          numberOfLines={1}
+          style={{
+            fontSize: 13,
+            fontWeight: "600",
+            color: textColor,
+          }}
+        >
+          Midnight City
+        </Text>
+        <Text
+          numberOfLines={1}
+          style={{
+            fontSize: 12,
+            marginTop: 1,
+            color: mutedColor,
+          }}
+        >
+          M83
+        </Text>
+      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={isPlaying ? "Pause" : "Play"}
+        onPress={() => setIsPlaying((p) => !p)}
+        hitSlop={8}
+        style={({ pressed }) => ({
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: pressed ? 0.55 : 1,
+        })}
+      >
+        <IconSymbol
+          name={isPlaying ? "pause.fill" : "play.fill"}
+          size={22}
+          color={textColor}
+        />
+      </Pressable>
+    </View>
   );
 }

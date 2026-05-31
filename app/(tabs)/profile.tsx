@@ -1,182 +1,245 @@
-import { Colors } from "@/constants/Colors";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import {
   type ThemePreference,
   useThemePreference,
 } from "@/providers/ThemePreferenceProvider";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const THEME_OPTIONS: {
+type ThemeIcon = "circle.lefthalf.filled" | "sun.max.fill" | "moon.fill";
+
+type ThemeOption = {
   description: string;
+  icon: ThemeIcon;
   label: string;
   value: ThemePreference;
-}[] = [
+};
+
+const THEME_OPTIONS: ThemeOption[] = [
   {
     value: "system",
     label: "System",
     description: "Follow the device setting automatically.",
+    icon: "circle.lefthalf.filled",
   },
   {
     value: "light",
     label: "Light",
     description: "Always use the light appearance.",
+    icon: "sun.max.fill",
   },
   {
     value: "dark",
     label: "Dark",
     description: "Always use the dark appearance.",
+    icon: "moon.fill",
   },
 ];
 
+const ACCENT = "#ea580c"; // orange-600 — matches Colors.light.tint
+const MUTED_LIGHT = "#475569"; // slate-600
+const MUTED_DARK = "#cbd5e1"; // slate-300
+const ICON_TEXT_LIGHT = "#0f172a"; // slate-900
+const ICON_TEXT_DARK = "#f1f5f9"; // slate-100
+
 export default function ProfileScreen() {
-  const colorScheme = useColorScheme();
-  const { preference, setPreference } = useThemePreference();
-  const tintColor = Colors[colorScheme].tint;
-  const borderColor =
-    colorScheme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.10)";
-  const selectedBackground =
-    colorScheme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(2,132,199,0.08)";
+  const { colorScheme, preference, setPreference } = useThemePreference();
+  const isDark = colorScheme === "dark";
+  const iconColor = isDark ? ICON_TEXT_DARK : ICON_TEXT_LIGHT;
+  const mutedColor = isDark ? MUTED_DARK : MUTED_LIGHT;
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.avatar}>
-        <ThemedText style={styles.avatarText}>JB</ThemedText>
-      </View>
-      <ThemedText type="title">Profile</ThemedText>
-      <ThemedText style={styles.subtitle}>
-        Choose how the app should look across iOS, Android, and the web.
-      </ThemedText>
+    <View className="flex-1 bg-white dark:bg-slate-900">
+      <SafeAreaView className="flex-1" edges={["top"]}>
+        <ScrollView
+          contentContainerClassName="px-5 pt-3 pb-10"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="items-center pt-6 pb-8">
+            <View
+              className="w-[88px] h-[88px] rounded-full items-center justify-center mb-4 shadow-md"
+              style={{ backgroundColor: ACCENT }}
+            >
+              <Text className="text-white text-3xl font-bold">JB</Text>
+            </View>
+            <Text className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Jonathan Borg
+            </Text>
+            <Text className="mt-1 text-[15px] text-slate-600 dark:text-slate-300">
+              jonathan@x3m.io
+            </Text>
+          </View>
 
-      <ThemedView
-        style={styles.card}
-        lightColor="rgba(15,23,42,0.03)"
-        darkColor="rgba(255,255,255,0.05)"
-      >
-        <ThemedText type="subtitle">Color Scheme</ThemedText>
-        <ThemedText style={styles.cardDescription}>
-          System follows your device. Light and Dark override it everywhere.
-        </ThemedText>
+          <SectionLabel>Appearance</SectionLabel>
+          <Card>
+            {THEME_OPTIONS.map((option, index) => {
+              const isSelected = preference === option.value;
+              const isLast = index === THEME_OPTIONS.length - 1;
 
-        <View style={styles.optionList}>
-          {THEME_OPTIONS.map((option) => {
-            const isSelected = preference === option.value;
+              return (
+                <Pressable
+                  key={option.value}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: isSelected }}
+                  accessibilityLabel={option.label}
+                  accessibilityHint={option.description}
+                  onPress={() => setPreference(option.value)}
+                  className={`flex-row items-center gap-3.5 px-3.5 py-3.5 active:opacity-80 ${
+                    isSelected ? "bg-white/70 dark:bg-white/10" : ""
+                  }`}
+                >
+                  <View className="w-9 h-9 rounded-xl items-center justify-center bg-slate-900/5 dark:bg-white/10">
+                    <IconSymbol
+                      name={option.icon}
+                      size={18}
+                      color={isSelected ? ACCENT : iconColor}
+                    />
+                  </View>
 
-            return (
-              <Pressable
-                key={option.value}
-                accessibilityRole="button"
-                onPress={() => setPreference(option.value)}
-                style={({ pressed }) => [
-                  styles.optionButton,
-                  {
-                    backgroundColor: isSelected
-                      ? selectedBackground
-                      : "transparent",
-                    borderColor: isSelected ? tintColor : borderColor,
-                    opacity: pressed ? 0.85 : 1,
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.optionIndicator,
-                    {
-                      borderColor: isSelected ? tintColor : borderColor,
-                      backgroundColor: isSelected ? tintColor : "transparent",
-                    },
-                  ]}
-                />
-                <View style={styles.optionContent}>
-                  <ThemedText type="defaultSemiBold">{option.label}</ThemedText>
-                  <ThemedText style={styles.optionDescription}>
-                    {option.description}
-                  </ThemedText>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                      {option.label}
+                    </Text>
+                    <Text className="text-[13px] mt-0.5 text-slate-600 dark:text-slate-300">
+                      {option.description}
+                    </Text>
+                  </View>
 
-        <ThemedText style={styles.statusText}>
-          Active appearance: {formatThemeLabel(colorScheme)}. Preference:{" "}
-          {formatThemeLabel(preference)}.
-        </ThemedText>
-      </ThemedView>
-    </ThemedView>
+                  <View
+                    className="w-[22px] h-[22px] rounded-full border-2 items-center justify-center"
+                    style={{
+                      borderColor: isSelected
+                        ? ACCENT
+                        : isDark
+                          ? "rgba(255,255,255,0.25)"
+                          : "rgba(15,23,42,0.2)",
+                    }}
+                  >
+                    {isSelected ? (
+                      <View
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ backgroundColor: ACCENT }}
+                      />
+                    ) : null}
+                  </View>
+
+                  {!isLast ? (
+                    <View className="absolute left-[62px] right-3.5 bottom-0 h-px bg-slate-900/5 dark:bg-white/10" />
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </Card>
+
+          <SectionLabel className="mt-6">Account</SectionLabel>
+          <Card>
+            <SettingsRow
+              icon="person.crop.circle"
+              label="Edit profile"
+              iconColor={iconColor}
+              mutedColor={mutedColor}
+            />
+            <SettingsRow
+              icon="bell.fill"
+              label="Notifications"
+              iconColor={iconColor}
+              mutedColor={mutedColor}
+            />
+            <SettingsRow
+              icon="lock.fill"
+              label="Privacy & security"
+              iconColor={iconColor}
+              mutedColor={mutedColor}
+              isLast
+            />
+          </Card>
+
+          <SectionLabel className="mt-6">Support</SectionLabel>
+          <Card>
+            <SettingsRow
+              icon="questionmark.circle.fill"
+              label="Help center"
+              iconColor={iconColor}
+              mutedColor={mutedColor}
+            />
+            <SettingsRow
+              icon="envelope.fill"
+              label="Send feedback"
+              iconColor={iconColor}
+              mutedColor={mutedColor}
+              isLast
+            />
+          </Card>
+
+          <Text className="text-center mt-7 text-xs text-slate-500 dark:text-slate-400">
+            Expo SDK 56 · v1.0.0
+          </Text>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
-function formatThemeLabel(value: ThemePreference | "light" | "dark") {
-  return value.charAt(0).toUpperCase() + value.slice(1);
+function SectionLabel({
+  children,
+  className = "",
+}: {
+  children: string;
+  className?: string;
+}) {
+  return (
+    <Text
+      className={`text-xs font-semibold tracking-wider ml-1 mb-2 text-slate-500 dark:text-slate-400 ${className}`}
+    >
+      {children.toUpperCase()}
+    </Text>
+  );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#A1CEDC",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
-  avatarText: {
-    fontSize: 28,
-    fontWeight: "700",
-  },
-  subtitle: {
-    marginTop: 8,
-    textAlign: "center",
-    opacity: 0.6,
-    maxWidth: 360,
-  },
-  card: {
-    width: "100%",
-    maxWidth: 420,
-    marginTop: 28,
-    borderRadius: 24,
-    padding: 20,
-    gap: 12,
-  },
-  cardDescription: {
-    opacity: 0.7,
-  },
-  optionList: {
-    gap: 12,
-    marginTop: 8,
-  },
-  optionButton: {
-    borderWidth: 1,
-    borderRadius: 18,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  optionIndicator: {
-    width: 14,
-    height: 14,
-    borderRadius: 999,
-    borderWidth: 2,
-    flexShrink: 0,
-  },
-  optionContent: {
-    flex: 1,
-    gap: 4,
-  },
-  optionDescription: {
-    opacity: 0.68,
-  },
-  statusText: {
-    marginTop: 8,
-    opacity: 0.7,
-  },
-});
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <View className="rounded-2xl overflow-hidden bg-slate-900/[0.04] dark:bg-white/[0.06]">
+      {children}
+    </View>
+  );
+}
+
+type SettingsRowProps = {
+  icon: Parameters<typeof IconSymbol>[0]["name"];
+  label: string;
+  iconColor: string;
+  mutedColor: string;
+  isLast?: boolean;
+  onPress?: () => void;
+};
+
+function SettingsRow({
+  icon,
+  label,
+  iconColor,
+  mutedColor,
+  isLast,
+  onPress,
+}: SettingsRowProps) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      className="flex-row items-center gap-3.5 px-3.5 py-3.5 active:opacity-80"
+    >
+      <View className="w-9 h-9 rounded-xl items-center justify-center bg-slate-900/5 dark:bg-white/10">
+        <IconSymbol name={icon} size={18} color={iconColor} />
+      </View>
+      <View className="flex-1">
+        <Text className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          {label}
+        </Text>
+      </View>
+      <IconSymbol name="chevron.right" size={16} color={mutedColor} />
+      {!isLast ? (
+        <View className="absolute left-[62px] right-3.5 bottom-0 h-px bg-slate-900/5 dark:bg-white/10" />
+      ) : null}
+    </Pressable>
+  );
+}

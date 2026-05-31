@@ -17,7 +17,8 @@
     "clean:cache": "rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/metro-* && rm -rf .expo/ && rm -rf .expo-shared/",
     "clean:all": "npm run clean:node_modules && npm run clean:ios && npm run clean:android && npm run clean:cache && npm run clean:watchman",
     "clean:watchman": "watchman watch-del-all",
-    "nuke": "rm -rf package-lock.json && npm run clean:all"
+    "nuke": "rm -rf package-lock.json && npm run clean:all",
+    "postinstall": "patch-package"
   },
   "jest": {
     "preset": "jest-expo",
@@ -43,6 +44,7 @@
     "expo-system-ui": "~56.0.5",
     "expo-web-browser": "~56.0.5",
     "nativewind": "^4.2.3",
+    "patch-package": "^8.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.85.3",

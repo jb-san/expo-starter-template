@@ -13,6 +13,17 @@ const MAPPING: Record<string, React.ComponentProps<typeof MaterialIcons>['name']
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'circle.lefthalf.filled': 'brightness-medium',
+  'sun.max.fill': 'light-mode',
+  'moon.fill': 'dark-mode',
+  'person.crop.circle': 'account-circle',
+  'bell.fill': 'notifications',
+  'lock.fill': 'lock',
+  'questionmark.circle.fill': 'help',
+  'envelope.fill': 'email',
+  'music.note': 'music-note',
+  'play.fill': 'play-arrow',
+  'pause.fill': 'pause',
 };
 
 export type IconSymbolName = keyof typeof MAPPING;
